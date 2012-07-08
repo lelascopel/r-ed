@@ -1,0 +1,148 @@
+OK, so in the first post we saw that it is quite easy to calculate Principle Response Curves in R.
+
+How are these interpreted?
+
+```{r echo=FALSE, message=FALSE}
+# data
+require(vegan)
+data(pyrifos)  # abundance data
+time <- gl(11, 12, labels=c(-4, -1, 0.1, 1, 2, 4, 8, 12, 15, 19, 24))   # time variable
+treatment <- factor(rep(c(0.1, 0, 0, 0.9, 0, 44, 6, 0.1, 44, 0.9, 0, 6), 11))  # treatment variable
+pyr_prc <- prc(response = pyrifos, treatment = treatment, time = time)
+```
+```{r echo=FALSE}
+plot(pyr_prc, select = abs(summary(pyr_prc)$sp) > 0.5)
+```
+
+These plot shows on the x-Axis the time and on the y-Axis the difference from the control treatments.
+The farther apart from the x-Axis the more different are the communities compared to the control.
+
+We see a clearly treatment-related effect: After application at time 0 the treated communities rapidly change treatment dependent.
+However to the end of the experiment the treated and the control get similar again, which we may call 'recovery'.
+
+On the right side we see the species names. This shows the contribution of the species to this plot.
+
+For example ceanhora (=*Caenis horaria*) has the lowest weight (~-3), so this species decreases the most after application. binitent(=*Bithynia tentaculata*) has a positive weight and abundance increases slightly.
+
+Let´s move back to the paper and the tables therein:
+Table 1 contains the proportions of variance that can be attributed to Time and Treatment.
+We can extract this information if we just print the prc-object:
+
+```{r}
+pyr_prc
+```
+
+Since a prc is a special case of a rda model
+```{r eval=FALSE}
+rda(response ~ treatment * time + Condition(time))
+```
+so *Conditional* refers in this output to time and *Constrained* to treatment and its interaction with time.
+
+Looking at inertia we see that time explains 22% and treatment (+ the interaction with time) 33% of variance.
+
+
+The second part of this table is a little harder:
+Either we refit the model with rda() as above and look at the summary where this information is displayed, or we dig a little in the object returned by prc().
+
+This object is quite big with a lot of information in it, for more information see ?cca.object.
+The eigenvalues are stored in pyr_prc$CCA$eig and to get the explained variance per axis we need to divide these eigenvalues by their sum:
+
+```{r}
+pyr_prc$CCA$eig/sum(pyr_prc$CCA$eig)
+```
+
+So the first axis explains 26% and the second 8.6% of variance.
+
+As a side note:
+```{r results='hide'}
+pyr_prc$CCA$tot.chi/pyr_prc$tot.chi   
+pyr_prc$pCCA$tot.chi/pyr_prc$tot.chi
+```
+would return the explained variances by treatment and treatment from above.
+
+
+The first (displayed) axis can also be tested for 'significance' using a permutation test:
+
+```{r cache=TRUE}
+anova(pyr_prc, strata = time, first=TRUE, perm.max = 1000)
+```
+which gives the significance of the first PRC-axis (cf. Table 2).
+
+
+Table 2 gives also the period of significant influence of the treatment:
+Van den Brink and Ter Braak did this using Monte Carlo permutation tests per sampling date, using the natural log-transformed nominal dose as the explanatory variable. 
+
+Of course this can also be done in R ;)
+
+First we need to transform the treatment dose:
+```{r}
+ln_treatment <- log(20 * as.numeric(as.character(treatment)) + 1)
+```
+
+And then we run a permutation test (via anova.cca) per sampling date:
+```{r cache=TRUE}
+out <- NULL
+for(i in levels(time)) {
+  take_spec <- pyrifos[time == i, ] 
+  take_treatment <- ln_treatment[time == i]
+  out[[i]] <- anova(rda(take_spec ~ take_treatment), by = "terms", step = 1000)
+}
+sapply(out, function(x) x[1, 5])   # grabs the p-values per date
+```
+I am looping through time and for every sampling week I run a permutation test on a RDA. The results are in accordance with Table 2: there is a statistically significant effect of treatment from week 0.1 till week 19.
+
+Besides the overall significance of treatment, they also looked which treatments differed from control in order to get a no-observed-effect Concentration (NOEC) [=the concentration below the lowest significant concentration]. 
+
+Testing by permutation fails here, because there are not enough unique permutations (we have only 2 treated and 4 controls per sampling date).
+Therefore they applied a Williams Test [1] on the first principle component of a PCA on each sampling date.
+
+This is a little bit more challenging, since we need to compute a PCA, extract the scores and the run a Williams-Test on these. I could not find any reference how to run the cited Williams Test in R (if anyone has a hint give me a note!).
+
+Instead of using a trend-test we could use Dunnett-Contrasts - Comparing every treatment to the control. However this approach has less power.
+
+I R we could do something like this:
+
+```{r cache=TRUE}
+df <- data.frame(treatment = treatment,
+                 time = time)
+# package for multiple comparisons
+require(multcomp)
+# create empty object
+out_willi <- NULL
+# loop through time, compute PCA, extract scores and do Williams-Test
+for(i in levels(time)) {
+    pca <- rda(pyrifos[time == i, ])                          # Compute PCA
+    pca_scores <- scores(pca, display="sites", choices = 1)  # scores of first principle component
+    
+    out_willi[[i]] <- summary(glht(aov(pca_scores ~ treatment, data = df[time == i, ]), 
+                                   alternative = "t", 
+                                   linfct = mcp(treatment = "Dunnett")))
+    }
+# extract p-values
+result <- lapply(out_willi, function(x) data.frame(comp = levels(df$treatment)[-1], 
+                                         pval = x$test$pvalues, 
+                                         sig = x$test$pvalues < 0.05))
+# shows the results of Williams-Test on PCA-scores for week 1:
+result[['1']]
+```
+
+
+So we run through time, via a for-loop. For every time-point we compute a PCA and extract the scores. Then we run the Dunnett contrasts with the multcomp package. Finally we extract our results.
+
+As we see, we get a different result then in the paper. Here our NOEC would be 0.9 $\mu g/L$. But I think this can be attributed to the lower power of Dunnetts test.
+ 
+
+OK, so now we are finished with Principle Response Curves. Of course there are a lot more possibilities to analyze such data sets. My next posts will probably show some alternatives to PRC: SPEAR, mvabund and control charts.
+
+
+Of course I can´t (and don´t want) give any warranty on the correctness of these blog entries. 
+So be critical! 
+
+
+
+```
+[1] Williams DA. 1972. The comparison of several dose levels with
+a zero dose control. Biometrics 28:519–531.
+```
+
+

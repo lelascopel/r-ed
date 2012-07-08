@@ -1,0 +1,15 @@
+nparcomp
+multcomp
+survival
+splines
+mvtnorm
+vegan
+permute
+knitr
+stats
+graphics
+grDevices
+utils
+datasets
+methods
+base
