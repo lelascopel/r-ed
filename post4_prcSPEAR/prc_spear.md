@@ -2,13 +2,20 @@
 
 
 
-Recently Liess & Beketov, (2011) proposed a new method to analyze mesocosm data: SPEARmesocosm. 
+Recently Liess & Beketov, (2011) proposed a new method to analyze mesocosm data: **SPEARmesocosm**. 
 
-The tool to calculate SPEAR values is freely available as webapplication at http://www.systemecology.eu/SPEAR. 
-So in this blog I will show how we can use this tool to analyse a mesocosm experiment:
+They classified species into 'SPEciesAtRisk' and 'SPEcies not At Risk' based on three biological traits: 
+* toxicological sensitivity to organic toxicants
+* generation time
+* the presence of aquatic stages during contamination
+
+With this classification a SPEAR-value for each sample can be calculated as the relative abundance of sensitive species.
+Their tool to calculate SPEAR is freely available as web-application at http://www.systemecology.eu/SPEAR. 
+
+Here I will show how we can use this tool to analyze a mesocosm experiment:
 
 
-As in the last post we first load the data and the packages we will need:
+As in the last post we first load the data and packages:
 
 ```r
 require(vegan)  # for the data
@@ -35,7 +42,7 @@ pyrifos$ditch <- gl(12, 1, length = 132)
 
 
 
-SPEAR-calculator accepts only data in the long format, we can use melt() to bring data from the wide into the long format:
+The SPEAR-calculator accepts only data in the long format, we can use melt() from the reshape 2 package to bring data from the wide into the long format:
 
 ```r
 # bring data to long format
@@ -43,7 +50,11 @@ pyrifos_melt <- melt(pyrifos, id = c("dose", "week", "ditch"))
 ```
 
 
-SPEARmesocosm incorporates species traits into the analysis. It compares the taxa if they are classified as SPEcies At Risk or not. Therefore we need complete taxanames. Unfortunately the data available in vegan contains only abbreviated taxanames. I tried to recover the names from the abbreviations, but was not successful for all of the species. I prepared a table to replace the abbreviations with real taxanames:
+SPEARmesocosm classifies species based on biological traits. Therefore we need complete taxa names. For ordinations like PRC it doesn´t matter how we name our species, but here the SPEAR algorithm matches the species names with a database.
+
+Unfortunately the data available in vegan contains only abbreviated taxa names. 
+I tried to recover the names from the abbreviations, but was not successful for all of the species. 
+I made up a table (see my [github repository](https://github.com/EDiLD/r-ed) for this blog) to replace the abbreviations with real taxa names:
 
 ```r
 # get lookup table for taxa-names from my github repository
@@ -57,7 +68,8 @@ pyrifos_melt$variable <- taxa_names$taxa[match(pyrifos_melt$variable, taxa_names
 pyrifos_melt <- pyrifos_melt[!is.na(pyrifos_melt$variable), ]
 ```
 
-No our data is ready and we have to export it as Excel-file to use it with the SPEAR calculator.
+
+Now the data is ready and we have to export it as Excel-file to use it with the SPEAR calculator.
 
 
 ```r
@@ -66,23 +78,28 @@ write.xlsx2(pyrifos_melt, file = "spear_in.xlsx", row.names = FALSE)
 ```
 
 
-Now we start the [SPEAR-calculator](http://www.systemecology.eu/SPEAR), start a new Mesocosm Study and import our data which is in spear_in.xlsx.
+We start the [SPEAR-calculator](http://www.systemecology.eu/SPEAR), start a 'new Mesocosm Study' and import our data which is in stored spear_in.xlsx.
+
 ![alt text](screenshots/1.png)
-The we must select the colums coding taxa, abundance, treatment, timing and replicates:
+
+Then we must select the columns coding taxa, abundance, treatment, timing and replicates:
+
 ![alt text](screenshots/2.png)
-And that´s it: You can browse through the results in the calculator, but also export the results.
-Since we want to make some nice plots (and perhabs some statistical tests) we export the results to our working directory and name the file 'spear_out.xls'.
+
+And that´s it: You can browse through the results in the calculator, but also export them to a excel-sheet.
+Since we want to make some nice plots (and perhaps some statistical tests) we export the results to our working directory and name the file 'spear_out.xls'.
 
 
 
 ```r
-# read xls from SPEAR-calculator
+# read .xls from SPEAR-calculator
 spear <- read.xls("spear_out.xls", sheet = 3)
 spear$Treatment <- factor(spear$Treatment)
 ```
 
 
-Having the data in R we can make some plots, for example with ggplot2:
+Having the data in R we can make some plots with ggplot2:
+
 * SPEAR against time for all replicates:
 
 
@@ -96,7 +113,8 @@ p
 ![plot of chunk unnamed-chunk-7](figure/unnamed-chunk-7.png) 
 
 
-* Hmm, so many lines... We can plot also only the mean SPEARvalues per treatment and time
+
+* Hmm, so many lines... We can plot also only the mean Spear values per treatment and time
 
 
 ```r
@@ -111,7 +129,9 @@ p2
 ![plot of chunk unnamed-chunk-8](figure/unnamed-chunk-8.png) 
 
 
-* Or, to get a plot similar to the Principle Response Curves: Plot the difference in SPEAR to the control:
+
+* Or, to get a plot similar to the Principle Response Curves: Plot the difference of treatments to the control
+
 
 ```r
 # plot difference to control
@@ -127,17 +147,24 @@ p3
 ![plot of chunk unnamed-chunk-9](figure/unnamed-chunk-9.png) 
 
 
+We see, that the graphs from SPEARmesocosm and Principle Response Curves look similar,
+although it must be noted that here I used only a subset of species (because i could not recover all species names).
+
+The SPEARmesocosm-values could be further analysed with univariate methods, but I'll skip that for now.
+
+Next time I'll analyze the sama dataset using the mvabund-package.
+
 
 **Refs**
-<p>Liess M and Beketov M (2011).
-&ldquo;Traits And Stress: Keys to Identify Community Effects of Low Levels of Toxicants in Test Systems.&rdquo;
-<EM>Ecotoxicology</EM>, <B>20</B>.
-ISSN 0963-9292, <a href="http://dx.doi.org/10.1007/s10646-011-0689-y">http://dx.doi.org/10.1007/s10646-011-0689-y</a>.
-<p>Liess M and Beketov M (2011).
-&ldquo;Traits And Stress: Keys to Identify Community Effects of Low Levels of Toxicants in Test Systems.&rdquo;
-<EM>Ecotoxicology</EM>, <B>20</B>.
-ISSN 0963-9292, <a href="http://dx.doi.org/10.1007/s10646-011-0689-y">http://dx.doi.org/10.1007/s10646-011-0689-y</a>.
 
+<p>Liess M and Beketov M (2011).
+&ldquo;Traits And Stress: Keys to Identify Community Effects of Low Levels of Toxicants in Test Systems.&rdquo;
+<EM>Ecotoxicology</EM>, <B>20</B>.
+ISSN 0963-9292, <a href="http://dx.doi.org/10.1007/s10646-011-0689-y">http://dx.doi.org/10.1007/s10646-011-0689-y</a>.
+<p>Liess M and Beketov M (2011).
+&ldquo;Traits And Stress: Keys to Identify Community Effects of Low Levels of Toxicants in Test Systems.&rdquo;
+<EM>Ecotoxicology</EM>, <B>20</B>.
+ISSN 0963-9292, <a href="http://dx.doi.org/10.1007/s10646-011-0689-y">http://dx.doi.org/10.1007/s10646-011-0689-y</a>.
 
 
 

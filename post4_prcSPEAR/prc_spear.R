@@ -72,8 +72,11 @@ p3 <- ggplot(spear_relcont, aes(x = Time.Point, y = mean_spear, col = Treatment)
   geom_point() +
   geom_line() +
   xlab("Weeks") +
-  ylab("SPEARpesticides")
+  ylab(expression(paste(Delta, "SPEARpesticides")))
 p3
+
+
+##### Check ylab! with beketov.
 
 
 
