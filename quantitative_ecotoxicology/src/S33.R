@@ -1,4 +1,4 @@
-ALL <- read.table(file.path(getwd(), "quantitative_ecotoxicology/data/ALL.csv"), 
+ALL <- read.table(file.path(getwd(), "quantitative_ecotoxicology/data/S33.csv"), 
                  header = TRUE, 
                  sep = ";")
 

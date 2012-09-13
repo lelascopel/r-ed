@@ -1,4 +1,4 @@
-SO4 <- read.table(file.path(getwd(), "quantitative_ecotoxicology/data/SO4.csv"), 
+SO4 <- read.table(file.path(getwd(), "quantitative_ecotoxicology/data/S35.csv"), 
                   header = TRUE, 
                   sep = ";")
 SO4$rem <- ifelse(SO4$rem == "<", TRUE, FALSE)
