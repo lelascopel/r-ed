@@ -24,7 +24,7 @@ read_new <- function(x){
   out
 }
 
-setwd("/home/edisz/Downloads/Newman_data")
+setwd(file.path(getwd(), "quantitative_ecotoxicology/data/"))
 files <- list.files(file.path(getwd(), "data"), full.names=TRUE, pattern="*.txt")
 for(i in seq_along(files)){
   print(files[i])
