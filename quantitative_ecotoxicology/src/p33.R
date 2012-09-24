@@ -1,14 +1,19 @@
 ALL <- read.table(file.path(getwd(), "quantitative_ecotoxicology/data/S33.csv"), 
                  header = TRUE, 
                  sep = ";")
+head(ALL)
 
 winsori <- function (x, width = 2)
 {
+  # check if sorted
   if(is.unsorted(x))
     stop("Values must be sorted!")
+  # get number of observations
   n <- length(x)
+  # Replace lowest
   x[1:width] <- x[width + 1]
-  x[(n-width):n] <- x[(n-width)]
+  # replace highest
+  x[(n - width + 1):n] <- x[(n-width)]
   x
 }
 
@@ -21,4 +26,3 @@ sw <- function(x, width = 2){
 }
 sw(ALL$SO4_win)
 mean(ALL$SO4, trim=2/21)
-
