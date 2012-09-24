@@ -9,3 +9,6 @@ mod <- lm(LLEAD ~ LDAY, data = LEAD)
 plot(LLEAD ~ LDAY, data = LEAD)
 abline(mod)
 summary(mod)
+# diagnostics
+par(mfrow = c(2,2))
+plot(mod)
