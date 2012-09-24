@@ -1,0 +1,33 @@
+### Quantitative Ecotoxicology, page 35, Robust Regression on Order Statistics:
+
+Get the data from [here](https://raw.github.com/EDiLD/r-ed/master/quantitative_ecotoxicology/data/S35.csv) and read it into R:
+```{r include=FALSE}
+SO4 <- read.table("/home/edisz/Documents/Uni/Projects/blog/quantitative_ecotoxicology/data/S35.csv", 
+                  header = TRUE, 
+                  sep = ";")
+```
+
+```{r, eval=FALSE}
+SO4 <- read.table("S35.csv", 
+                 header = TRUE, 
+                 sep = ";")
+```
+
+
+First we need to convert the vector indicating if an observation is censored to TRUE/FALSE:
+```{r}
+SO4$rem2 <- ifelse(SO4$rem == "<", TRUE, FALSE)
+SO4
+```
+
+Then we can run the Robust Regression on Order Statistics with the ros() function from the NADA package:
+```{r message=FALSE}
+require(NADA)
+rs <- ros(SO4$value, SO4$rem2)
+print(rs)
+```
+
+Which gives the same mean and standard deviation as the SAS-Makro.
+
+Code and data are available at my [github-repo](https://github.com/EDiLD/r-ed/tree/master/quantitative_ecotoxicology) under filename 'p35'.
+
