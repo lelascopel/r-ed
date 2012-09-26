@@ -1,0 +1,27 @@
+### Quantitative Ecotoxicology, page 42, example 2.4, Wilcoxon rank sum test
+
+Get the data from [here](https://raw.github.com/EDiLD/r-ed/master/quantitative_ecotoxicology/data/p42.csv) and read it into R:
+```{r include=FALSE}
+SULFATE <- read.table("/home/edisz/Documents/Uni/Projects/blog/quantitative_ecotoxicology/data/p42.csv", 
+                  header = TRUE, 
+                  sep = ";")
+```
+
+```{r, eval=FALSE}
+SULFATE <- read.table("p42.csv", 
+                  header = TRUE, 
+                  sep = ";")
+```
+
+
+It is quite easy to perform a wilcoxon-test with the function wilcox.test:
+```{r}
+wilcox.test(SO4 ~ SITE, SULFATE, correct = TRUE)
+```
+
+```{r}
+wilcox.test(SO4 ~ SITE, SULFATE, correct = TRUE, alternative = "greater")
+```
+
+require(coin)
+wilcox_test(SO4 ~ SITE, SULFATE, ties.method = "mid-ranks")
