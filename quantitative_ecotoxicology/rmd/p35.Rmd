@@ -1,14 +1,14 @@
 ### Quantitative Ecotoxicology, page 35, Robust Regression on Order Statistics:
 
-Get the data from [here](https://raw.github.com/EDiLD/r-ed/master/quantitative_ecotoxicology/data/S35.csv) and read it into R:
+Get the data from [here](https://raw.github.com/EDiLD/r-ed/master/quantitative_ecotoxicology/data/p35.csv) and read it into R:
 ```{r include=FALSE}
-SO4 <- read.table("/home/edisz/Documents/Uni/Projects/blog/quantitative_ecotoxicology/data/S35.csv", 
+SO4 <- read.table("/home/edisz/Documents/Uni/Projects/blog/quantitative_ecotoxicology/data/p35.csv", 
                   header = TRUE, 
                   sep = ";")
 ```
 
 ```{r, eval=FALSE}
-SO4 <- read.table("S35.csv", 
+SO4 <- read.table("p35.csv", 
                  header = TRUE, 
                  sep = ";")
 ```

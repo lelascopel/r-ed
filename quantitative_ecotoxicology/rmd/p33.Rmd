@@ -1,15 +1,15 @@
 ```{r include=FALSE}
-ALL <- read.table("/home/edisz/Documents/Uni/Projects/blog/quantitative_ecotoxicology/data/S33.csv", 
+ALL <- read.table("/home/edisz/Documents/Uni/Projects/blog/quantitative_ecotoxicology/data/p33.csv", 
                  header = TRUE, 
                  sep = ";")
 ```
 
 ### Quantitative Ecotoxicology, page 33, example 2.1, Winsorization:
 
-Get the data (Sulfate Concentrations from Savannah River (South Carolina) in mg / L)) from [here](https://raw.github.com/EDiLD/r-ed/master/quantitative_ecotoxicology/data/S33.csv) and read it into R:
+Get the data (Sulfate Concentrations from Savannah River (South Carolina) in mg / L)) from [here](https://raw.github.com/EDiLD/r-ed/master/quantitative_ecotoxicology/data/p33.csv) and read it into R:
 
 ```{r, eval=FALSE}
-ALL <- read.table("S33.csv", 
+ALL <- read.table("p33.csv", 
                  header = TRUE, 
                  sep = ";")
 ```

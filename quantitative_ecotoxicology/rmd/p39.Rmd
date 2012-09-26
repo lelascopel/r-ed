@@ -1,34 +1,36 @@
 ### Quantitative Ecotoxicology, page 39, example 2.3, Kaplan–Meier estimates
 
-Get the data from [here](https://raw.github.com/EDiLD/r-ed/master/quantitative_ecotoxicology/data/S39.csv) and read it into R:
+Get the data from [here](https://raw.github.com/EDiLD/r-ed/master/quantitative_ecotoxicology/data/p39.csv) and read it into R:
 ```{r include=FALSE}
-SULFATE <- read.table("/home/edisz/Documents/Uni/Projects/blog/quantitative_ecotoxicology/data/S39.csv", 
+SULFATE <- read.table("/home/edisz/Documents/Uni/Projects/blog/quantitative_ecotoxicology/data/p39.csv", 
                   header = TRUE, 
                   sep = ";")
 ```
 
 ```{r, eval=FALSE}
-SULFATE <- read.table("S39.csv", 
+SULFATE <- read.table("p39.csv", 
                   header = TRUE, 
                   sep = ";")
 ```
 
-Convert of left to right censored data:
+Convert left to right censored data:
 ```{r}
 SULFATE$FLIP <- abs(SULFATE$SO4 - 8)
 SULFATE
 ```
 
-And get the Kaplan-Meier estimates using survfit() from the survival package:
+The Kaplan-Meier estimates can be calculated using survfit() from the survival package:
 ```{r message=FALSE}
 require(survival)
 fit <- survfit(Surv(FLIP, FLAG) ~ 1, data = SULFATE, conf.type="plain") 
 fit
 ```
 
-The median of 3.15, 95% CI [1.8, 4.5] is the as with SAS.
+I set conf.type="plain" to be concordant with 'CONFTYPE=LINEAR' from SAS.
 
-Additional a fast plot:
+The median of 3.15, 95% CI [1.8, 4.5] is the same as with SAS.
+
+Finally a quick plot:
 ```{r p39}
 plot(fit)
 ```
