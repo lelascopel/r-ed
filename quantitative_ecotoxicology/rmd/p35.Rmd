@@ -15,6 +15,7 @@ SO4 <- read.table("S35.csv",
 
 
 First we need to convert the vector indicating if an observation is censored to TRUE/FALSE:
+I store it in a new colum called 'rem2' (you could also overwrite df$rem):
 ```{r}
 SO4$rem2 <- ifelse(SO4$rem == "<", TRUE, FALSE)
 SO4
@@ -27,7 +28,7 @@ rs <- ros(SO4$value, SO4$rem2)
 print(rs)
 ```
 
-Which gives the same mean and standard deviation as the SAS-Makro.
+Which gives the same mean and standard deviation as the SAS-Makro (5.16 and 2.07).
 
 Code and data are available at my [github-repo](https://github.com/EDiLD/r-ed/tree/master/quantitative_ecotoxicology) under filename 'p35'.
 
