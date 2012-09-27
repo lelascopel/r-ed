@@ -1,0 +1,15 @@
+### Quantitative Ecotoxicology, page 45
+
+Get the data from [here](https://raw.github.com/EDiLD/r-ed/master/quantitative_ecotoxicology/data/p45.csv) and read it into R:
+```{r include=FALSE}
+SULFATE <- read.table("/home/edisz/Documents/Uni/Projects/blog/quantitative_ecotoxicology/data/p45.csv", 
+                  header = TRUE, 
+                  sep = ";")
+```
+
+```{r, eval=FALSE}
+SULFATE <- read.table("p45.csv", 
+                  header = TRUE, 
+                  sep = ";")
+```
+
