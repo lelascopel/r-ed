@@ -13,15 +13,33 @@ SULFATE <- read.table("p42.csv",
                   sep = ";")
 ```
 
+Lets first have a look at the data via a violin plot:
+```{r p43, message=FALSE}
+require(ggplot2)
+ggplot(SULFATE, aes(x = SITE, y = SO4)) +
+  geom_violin()
+```
+
 
 It is quite easy to perform a wilcoxon-test with the function wilcox.test:
 ```{r}
-wilcox.test(SO4 ~ SITE, SULFATE, correct = TRUE)
+wilcox.test(SO4 ~ SITE, data = SULFATE, correct = TRUE)
 ```
-
+It works with the usual formula-notation, additional I specified the continuity correction.
+For a one-sided test we can specify the argument 'alternative':
 ```{r}
-wilcox.test(SO4 ~ SITE, SULFATE, correct = TRUE, alternative = "greater")
+wilcox.test(SO4 ~ SITE, data = SULFATE, correct = TRUE, alternative = "greater")
 ```
 
+The p-values are the same as with SAS, however we get a warning since we have ties in our data:
+> cannot compute exact p-value with ties
+
+If we want to compute exact p-values in the presence of ties, we could use wilcox_test() from the coin package: 
+
+```{r message=FALSE}
 require(coin)
-wilcox_test(SO4 ~ SITE, SULFATE, ties.method = "mid-ranks")
+wilcox_test(SO4 ~ SITE, SULFATE, distribution="exact", conf.int = TRUE)
+```
+Here I also specified to output the 95%-Condidence-Interval via the 'conf.int argument.
+
+Code and data are available at my [github-repo](https://github.com/EDiLD/r-ed/tree/master/quantitative_ecotoxicology) under filename 'p42'.
