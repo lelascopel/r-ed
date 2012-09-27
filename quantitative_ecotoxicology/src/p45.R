@@ -1,9 +1,10 @@
-CADMIUM <- read.table(file.path(getwd(), "quantitative_ecotoxicology/data/S45.csv"), 
-                      header = TRUE, 
-                      sep = ";")
+CADMIUM <- read.table("/home/edisz/Documents/Uni/Projects/blog/quantitative_ecotoxicology/data/p45.csv", 
+                  header = TRUE, 
+                  sep = ";")
 
 
 CADMIUM$FLIP <- abs(CADMIUM$CD - 100)
+CADMIUM <- CADMIUM[order(CADMIUM$SITE, CADMIUM$FLIP), ]
 
 require(survival)
 # log-rank

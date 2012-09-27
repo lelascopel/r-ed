@@ -1,4 +1,4 @@
-SULFATE <- read.table("/home/edisz/Documents/Uni/Projects/blog/quantitative_ecotoxicology/data/S39.csv", 
+SULFATE <- read.table("/home/edisz/Documents/Uni/Projects/blog/quantitative_ecotoxicology/data/p39.csv", 
                   header = TRUE, 
                   sep = ";")
 
