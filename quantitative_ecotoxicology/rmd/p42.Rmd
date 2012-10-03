@@ -31,7 +31,7 @@ For a one-sided test we can specify the argument 'alternative':
 wilcox.test(SO4 ~ SITE, data = SULFATE, correct = TRUE, alternative = "greater")
 ```
 
-The p-values are the same as with SAS, however we get a warning since we have ties in our data:
+The p-values are the same as with SAS, however we get a warning since we have ties in our data (I don't know how SAS handles this):
 > cannot compute exact p-value with ties
 
 If we want to compute exact p-values in the presence of ties, we could use wilcox_test() from the coin package: 
@@ -40,6 +40,6 @@ If we want to compute exact p-values in the presence of ties, we could use wilco
 require(coin)
 wilcox_test(SO4 ~ SITE, SULFATE, distribution="exact", conf.int = TRUE)
 ```
-Here I also specified to output the 95%-Condidence-Interval via the 'conf.int argument.
+Here I also specified to output the 95%-Confidence-Interval via the 'conf.int argument.
 
-Code and data are available at my [github-repo](https://github.com/EDiLD/r-ed/tree/master/quantitative_ecotoxicology) under filename 'p42'.
+Code and data are available at my [github-repo](https://github.com/EDiLD/r-ed/tree/master/quantitative_ecotoxicology) under file name 'p42'.
