@@ -5,7 +5,7 @@ options(scipen = 1, digits = 5)
 
 
 
-### Quantitative Ecotoxicology, page 85, example 3.2, Nonlinear Least Squares
+### Quantitative Ecotoxicology, page 85, example 3.2, Nonlinear Regression
 
 Get the data from [here](https://raw.github.com/EDiLD/r-ed/master/quantitative_ecotoxicology/data/p85.csv) and read it into R:
 
@@ -15,14 +15,14 @@ OYSTERZN <- read.table("/home/edisz/Documents/Uni/Projects/blog/quantitative_eco
                       sep = ";")
 
 ```
-
 ```{r, eval=FALSE}
 OYSTERZN <- read.table("p85.csv", 
                       header = TRUE, 
                       sep = ";")
-OYSTERZN
 ```
-
+```{r}
+head(OYSTERZN)
+```
 ```{r p85_raw}
 plot(ZINC ~ DAY, data = OYSTERZN)
 ```
@@ -60,9 +60,9 @@ summary(mod_noweight)
 sum_noweight <- summary(mod_noweight)
 ```
 
-The resulting estimates of $k_e$ and $C_0$ are `r sum_noweight$coefficients[1, 1]` $\pm$ `r sum_noweight$coefficients[1, 2]` and  `r round(sum_noweight$coefficients[2, 1], 0)` $\pm$ `r round(sum_noweight$coefficients[2, 2], 0)`.
+The resulting estimates of $k_{e1}$ and $C_0$ are `r sum_noweight$coefficients[1, 1]` $\pm$ `r sum_noweight$coefficients[1, 2]` and  `r round(sum_noweight$coefficients[2, 1], 0)` $\pm$ `r round(sum_noweight$coefficients[2, 2], 0)`.
 
-We can investige the residuals:
+We can investigate the residuals:
 
 ```{r p85_residuals_nls}
 res_mod_noweight <- resid(mod_noweight)
@@ -91,7 +91,7 @@ sum_weight <- summary(mod_weight)
 ```
 
 
-The estimates (`r sum_weight$coefficients[1, 1]` $\pm$ `r sum_weight$coefficients[1, 2]` and  `r round(sum_weight$coefficients[2, 1], 0)` $\pm$ `r round(sum_weight$coefficients[2, 2], 0)`) are quite similare to the nonweighted regression.
+The estimates (`r sum_weight$coefficients[1, 1]` $\pm$ `r sum_weight$coefficients[1, 2]` and  `r round(sum_weight$coefficients[2, 1], 0)` $\pm$ `r round(sum_weight$coefficients[2, 2], 0)`) are quite similar to the non weighted regression.
 
 We could plot the two models and the data:
 
@@ -124,11 +124,8 @@ plot(LZINC ~ DAY, OYSTERZN)
 And fit a linear regression:
 ```{r}
 mod_lm <- lm(LZINC ~ DAY, data = OYSTERZN)
-summary(mod_lm)
-```
-
-```{r include=FALSE}
 sum_lm <- summary(mod_lm)
+sum_lm
 ```
 
 which is fitting the model
@@ -146,6 +143,27 @@ lines(OYSTERZN$DAY, fit_mod_lm)
 # residuals
 plot(mod_lm, which = 1)
 ```
+
+The mean square error is given by 
+```{r}
+# MSE
+mean(sum_lm$residuals^2)
+```
+From which we can get an unbiased estimate of $C_0$:
+```{r}
+# unbiased estimate for C_0: exp(MSE/2) * exp(Intercept)
+exp(mean(sum_lm$residuals^2) / 2) * exp(sum_lm$coefficients[1, 1])
+```
+
+Which is between the weighted and non weighted nonlinear regression.
+
+
+Deviations between the book/SAS and R may be due to round error, eg:
+```{r}
+exp(sum_lm$coefficients[1, 1])
+1.06 * 433
+```
+
 
 
 Code and data are available at my [github-repo](https://github.com/EDiLD/r-ed/tree/master/quantitative_ecotoxicology) under file name 'p85'.
