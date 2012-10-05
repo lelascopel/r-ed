@@ -1,15 +1,35 @@
-### Quantitative Ecotoxicology, page 45
+### Quantitative Ecotoxicology, page 45, example 2.5, Gehan-Test
 
 Get the data from [here](https://raw.github.com/EDiLD/r-ed/master/quantitative_ecotoxicology/data/p45.csv) and read it into R:
 ```{r include=FALSE}
-SULFATE <- read.table("/home/edisz/Documents/Uni/Projects/blog/quantitative_ecotoxicology/data/p45.csv", 
+CADMIUM <- read.table("/home/edisz/Documents/Uni/Projects/blog/quantitative_ecotoxicology/data/p45.csv", 
                   header = TRUE, 
                   sep = ";")
 ```
 
 ```{r, eval=FALSE}
-SULFATE <- read.table("p45.csv", 
+CADMIUM <- read.table("p45.csv", 
                   header = TRUE, 
                   sep = ";")
 ```
 
+'Flip' the data:
+```{r}
+CADMIUM$FLIP <- abs(CADMIUM$CD - 100)
+CADMIUM
+```
+
+And test for differences using survdiff from the survival package:
+```{r message=FALSE}
+require(survival)
+# log-rank
+fit <- survdiff(Surv(FLIP, FLAG) ~ SITE, data = CADMIUM, rho = 0)
+fit
+# Peto & Peto modification of the Gehan-Wilcoxon test
+fit2 <- survdiff(Surv(FLIP, FLAG) ~ SITE, data = CADMIUM, rho = 1)
+fit2
+```
+
+
+
+Code and data are available at my [github-repo](https://github.com/EDiLD/r-ed/tree/master/quantitative_ecotoxicology) under file name 'p45'.
