@@ -1,9 +1,7 @@
-OYSTERZN<- read.table(file.path(getwd(), "quantitative_ecotoxicology/data/S85.csv"), 
+OYSTERZN <- read.table("/home/edisz/Documents/Uni/Projects/blog/quantitative_ecotoxicology/data/p85.csv", 
                       header = TRUE, 
                       sep = ";")
 
-OYSTERZN$WNLIN <- OYSTERZN$DAY^2
-OYSTERZN$LZINC <- log(OYSTERZN$ZINC)
 plot(ZINC ~ DAY, data = OYSTERZN)
 
 # without weights
@@ -19,7 +17,7 @@ abline(h = 0)
 
 # with fixed weights
 mod2 <- nls(ZINC ~ INITACT * exp((-(KE+0.00283))*DAY), OYSTERZN,
-            weights=OYSTERZN$WNLIN, 
+            weights = OYSTERZN$WNLIN, 
             start = list(KE=0.004, INITACT = 500))
 summary(mod2)
 pred_mod2 <- predict(mod2)
@@ -32,6 +30,7 @@ lines(OYSTERZN$DAY, pred_mod2, lty = "dashed")
 
 
 # Lm
+OYSTERZN$LZINC <- log(OYSTERZN$ZINC)
 mod3 <- lm(LZINC ~ DAY, data = OYSTERZN)
 summary(mod3)
 pred_mod3 <- predict(mod3)

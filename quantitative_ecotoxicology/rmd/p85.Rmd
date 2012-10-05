@@ -1,0 +1,151 @@
+
+```{r setup, echo=FALSE, cache=FALSE}
+options(scipen = 1, digits = 5)
+```
+
+
+
+### Quantitative Ecotoxicology, page 85, example 3.2, Nonlinear Least Squares
+
+Get the data from [here](https://raw.github.com/EDiLD/r-ed/master/quantitative_ecotoxicology/data/p85.csv) and read it into R:
+
+```{r include=FALSE}
+OYSTERZN <- read.table("/home/edisz/Documents/Uni/Projects/blog/quantitative_ecotoxicology/data/p85.csv", 
+                      header = TRUE, 
+                      sep = ";")
+
+```
+
+```{r, eval=FALSE}
+OYSTERZN <- read.table("p85.csv", 
+                      header = TRUE, 
+                      sep = ";")
+OYSTERZN
+```
+
+```{r p85_raw}
+plot(ZINC ~ DAY, data = OYSTERZN)
+```
+
+First we fit a **nonlinear Regression without weighting**.
+```{r}
+mod_noweight <- nls(ZINC ~ INITACT * exp((-(KE + 0.00283)) * DAY), 
+           data = OYSTERZN,
+           start = list(KE = 0.004, INITACT = 500))
+```
+
+So we fit the model
+
+$$
+ C_t = C_0 e^{-(k_{e1} + k_{e2}) t}
+$$
+
+to our data.
+
+In the R formula **ZINC** corresponds to $C_t$, 
+**INITACT** to $C_0$, 
+**KE** to $k_{e1}$, 
+**0.00283** is the decay rate constant for 65-Zn $k_{e2}$
+and **DAY** to $t$.
+
+
+Were are going to estimate **KE** and **INITACT** and also supplied some start-values for the algorithm.
+
+We can look a the summary to get the estimates and standard error:
+```{r}
+summary(mod_noweight)
+```
+
+```{r include=FALSE}
+sum_noweight <- summary(mod_noweight)
+```
+
+The resulting estimates of $k_e$ and $C_0$ are `r sum_noweight$coefficients[1, 1]` $\pm$ `r sum_noweight$coefficients[1, 2]` and  `r round(sum_noweight$coefficients[2, 1], 0)` $\pm$ `r round(sum_noweight$coefficients[2, 2], 0)`.
+
+We can investige the residuals:
+
+```{r p85_residuals_nls}
+res_mod_noweight <- resid(mod_noweight)
+plot(OYSTERZN$DAY, res_mod_noweight)
+abline(h = 0)
+```
+
+Secondly, we run a **nonlinear regression with day-squared weighting**:
+
+We use day^2 as weights and add there a column to our data:
+```{r}
+OYSTERZN$WNLIN <- OYSTERZN$DAY^2
+```
+
+We run again nls, but now we supply this new column as weights:
+```{r}
+mod_weight <- nls(ZINC ~ INITACT * exp((-(KE+0.00283))*DAY), 
+                  data = OYSTERZN,
+                  weights = OYSTERZN$WNLIN, 
+                  start = list(KE = 0.004, INITACT = 500))
+summary(mod_weight)
+```
+
+```{r include=FALSE}
+sum_weight <- summary(mod_weight)
+```
+
+
+The estimates (`r sum_weight$coefficients[1, 1]` $\pm$ `r sum_weight$coefficients[1, 2]` and  `r round(sum_weight$coefficients[2, 1], 0)` $\pm$ `r round(sum_weight$coefficients[2, 2], 0)`) are quite similare to the nonweighted regression.
+
+We could plot the two models and the data:
+
+```{r p85_nls_fitted}
+# extract the fitted values
+fit_mod_noweight <- fitted(mod_noweight)
+fit_mod_weight <- fitted(mod_weight)
+# plot data
+plot(ZINC ~ DAY, data = OYSTERZN)
+# add fitted values
+lines(OYSTERZN$DAY, fit_mod_noweight)
+lines(OYSTERZN$DAY, fit_mod_weight, lty = "dashed")
+# add legend
+legend("topright", legend = c("nonweighted", "weighted"), lty=c("solid", "dashed"))
+```
+
+
+Finally we can also fit a **linear model** to the transformed Zinc-Concentrations:
+
+First we ln-transform the concentrations:
+```{r}
+OYSTERZN$LZINC <- log(OYSTERZN$ZINC)
+```
+
+We see that the data is now linear:
+```{r p85_raw2}
+plot(LZINC ~ DAY, OYSTERZN)
+```
+
+And fit a linear regression:
+```{r}
+mod_lm <- lm(LZINC ~ DAY, data = OYSTERZN)
+summary(mod_lm)
+```
+
+```{r include=FALSE}
+sum_lm <- summary(mod_lm)
+```
+
+which is fitting the model
+$$ln(Zn) = a * day + intercept$$, with a = `r round(sum_lm$coefficients[2, 1], 4)` and intercept = `r round(sum_lm$coefficients[1, 1], 2)`
+
+Now plot data and model, as well as the residuals:
+```{r p85_lm_fitted}
+# fitted values
+fit_mod_lm <- fitted(mod_lm)
+
+# data + fitted
+plot(LZINC ~ DAY, OYSTERZN)
+lines(OYSTERZN$DAY, fit_mod_lm)
+
+# residuals
+plot(mod_lm, which = 1)
+```
+
+
+Code and data are available at my [github-repo](https://github.com/EDiLD/r-ed/tree/master/quantitative_ecotoxicology) under file name 'p85'.
