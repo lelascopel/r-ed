@@ -1,8 +1,8 @@
-QCBLKS<- read.table(file.path(getwd(), "quantitative_ecotoxicology/data/S47_QCBLKS.csv"), 
+QCBLKS<- read.table("/home/edisz/Documents/Uni/Projects/blog/quantitative_ecotoxicology/data/p47_QCBLKS.csv", 
                       header = TRUE, 
                       sep = ";")
 
-LEADBLK <- read.table(file.path(getwd(), "quantitative_ecotoxicology/data/S47_LEADBLK.csv"), 
+LEADBLK <- read.table("/home/edisz/Documents/Uni/Projects/blog/quantitative_ecotoxicology/data/p47_LEADBLK.csv", 
                       header = TRUE, 
                       sep = ";")
 

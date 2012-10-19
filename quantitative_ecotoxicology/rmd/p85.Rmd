@@ -62,7 +62,7 @@ sum_noweight <- summary(mod_noweight)
 
 The resulting estimates of $k_{e1}$ and $C_0$ are `r sum_noweight$coefficients[1, 1]` $\pm$ `r sum_noweight$coefficients[1, 2]` and  `r round(sum_noweight$coefficients[2, 1], 0)` $\pm$ `r round(sum_noweight$coefficients[2, 2], 0)`.
 
-We can investigate the residuals:
+We can investigate the residuals, which show a clear pattern:
 
 ```{r p85_residuals_nls}
 res_mod_noweight <- resid(mod_noweight)
@@ -116,7 +116,7 @@ First we ln-transform the concentrations:
 OYSTERZN$LZINC <- log(OYSTERZN$ZINC)
 ```
 
-We see that the data is now linear:
+We see that the data has now linear trend:
 ```{r p85_raw2}
 plot(LZINC ~ DAY, OYSTERZN)
 ```
@@ -129,7 +129,7 @@ sum_lm
 ```
 
 which is fitting the model
-$$ln(Zn) = a * day + intercept$$, with a = `r round(sum_lm$coefficients[2, 1], 4)` and intercept = `r round(sum_lm$coefficients[1, 1], 2)`
+$$ln(Zn) = a * day + intercept$$ with a = `r round(sum_lm$coefficients[2, 1], 4)` and intercept = `r round(sum_lm$coefficients[1, 1], 2)`
 
 Now plot data and model, as well as the residuals:
 ```{r p85_lm_fitted}
@@ -144,25 +144,25 @@ lines(OYSTERZN$DAY, fit_mod_lm)
 plot(mod_lm, which = 1)
 ```
 
-The mean square error is given by 
+The mean square error can be calculated from the summary:
 ```{r}
 # MSE
-mean(sum_lm$residuals^2)
+sum_lm$sigma^2
 ```
 From which we can get an unbiased estimate of $C_0$:
 ```{r}
 # unbiased estimate for C_0: exp(MSE/2) * exp(Intercept)
-exp(mean(sum_lm$residuals^2) / 2) * exp(sum_lm$coefficients[1, 1])
+exp(sum_lm$sigma^2 / 2) * exp(sum_lm$coefficients[1, 1])
 ```
+where 
+```{r eval=FALSE}
+sum_lm$coefficients[1, 1]
+```
+extracts the intercept from the summary.
 
 Which is between the weighted and non weighted nonlinear regression.
+Again we have the same results as with SAS :) [Small deviations may be due to rounding error]
 
-
-Deviations between the book/SAS and R may be due to round error, eg:
-```{r}
-exp(sum_lm$coefficients[1, 1])
-1.06 * 433
-```
 
 
 

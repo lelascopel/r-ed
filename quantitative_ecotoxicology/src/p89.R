@@ -1,4 +1,4 @@
-MERCURY <- read.table(file.path(getwd(), "quantitative_ecotoxicology/data/S89_MERCURY.csv"), 
+MERCURY <- read.table('/home/edisz/Documents/Uni/Projects/blog/quantitative_ecotoxicology/data/p89_MERCURY.csv', 
                       header = TRUE, 
                       sep = ";")
 
@@ -14,7 +14,7 @@ CB <- exp(coef(EXPO)[1])
 KCB <- -coef(EXPO)[2]
 
 ##############################################
-FAST <- read.table(file.path(getwd(), "quantitative_ecotoxicology/data/S89_FAST.csv"), 
+FAST <- read.table('/home/edisz/Documents/Uni/Projects/blog/quantitative_ecotoxicology/data/p89_FAST.csv', 
                       header = TRUE, 
                       sep = ";")
 
@@ -42,6 +42,8 @@ nls_mod1 <- nls(PCI ~ CA * exp(-KCA * DAY) + CB * exp(-KCB * DAY),
                 upper = c(1, 1, 20000, 45000))
 
 plot(PCI ~ DAY, data = MERCURY)
-lines(MERCURY$DAY, fitted(nls_mod1))
+# smooth line
+pred_nls_mod1 <- predict(nls_mod1, newdata = data.frame(DAY = seq(0,100, 1)))
+lines(seq(0,100, 1), pred_nls_mod1)
 
 summary(nls_mod1)
