@@ -36,17 +36,15 @@ mod_noweight <- nls(ZINC ~ INITACT * exp((-(KE + 0.00283)) * DAY),
 
 So we fit the model
 
-$$
- C_t = C_0 e^{-(k_{e1} + k_{e2}) t}
-$$
+![alt text](http://chart.apis.google.com/chart?cht=tx&chl=C_t%20=%20C_0%20e^{-%28k_{e1}%2Bk_{e2}%29%20t})
 
 to our data.
 
-In the R formula **ZINC** corresponds to $C_t$, 
-**INITACT** to $C_0$, 
-**KE** to $k_{e1}$, 
-**0.00283** is the decay rate constant for 65-Zn $k_{e2}$
-and **DAY** to $t$.
+In the R formula **ZINC** corresponds to ![alt text](http://chart.apis.google.com/chart?cht=tx&chl=C_t) , 
+**INITACT** to ![alt text](http://chart.apis.google.com/chart?cht=tx&chl=C_0), 
+**KE** to ![alt text](http://chart.apis.google.com/chart?cht=tx&chl=k_{e1}), 
+**0.00283** is the decay rate constant for 65-Zn ![alt text](http://chart.apis.google.com/chart?cht=tx&chl=k_{e2})
+and **DAY** to ![alt text](http://chart.apis.google.com/chart?cht=tx&chl=t).
 
 
 Were are going to estimate **KE** and **INITACT** and also supplied some start-values for the algorithm.
@@ -60,7 +58,7 @@ summary(mod_noweight)
 sum_noweight <- summary(mod_noweight)
 ```
 
-The resulting estimates of $k_{e1}$ and $C_0$ are `r sum_noweight$coefficients[1, 1]` $\pm$ `r sum_noweight$coefficients[1, 2]` and  `r round(sum_noweight$coefficients[2, 1], 0)` $\pm$ `r round(sum_noweight$coefficients[2, 2], 0)`.
+The resulting estimates of ![alt text](http://chart.apis.google.com/chart?cht=tx&chl=k_{e1}) and ![alt text](http://chart.apis.google.com/chart?cht=tx&chl=C_0) are `r sum_noweight$coefficients[1, 1]` ![alt text](http://chart.apis.google.com/chart?cht=tx&chl=\\pm) `r sum_noweight$coefficients[1, 2]` and  `r round(sum_noweight$coefficients[2, 1], 0)` ![alt text](http://chart.apis.google.com/chart?cht=tx&chl=\\pm) `r round(sum_noweight$coefficients[2, 2], 0)`.
 
 We can investigate the residuals, which show a clear pattern:
 
@@ -91,7 +89,7 @@ sum_weight <- summary(mod_weight)
 ```
 
 
-The estimates (`r sum_weight$coefficients[1, 1]` $\pm$ `r sum_weight$coefficients[1, 2]` and  `r round(sum_weight$coefficients[2, 1], 0)` $\pm$ `r round(sum_weight$coefficients[2, 2], 0)`) are quite similar to the non weighted regression.
+The estimates (`r sum_weight$coefficients[1, 1]` ![alt text](http://chart.apis.google.com/chart?cht=tx&chl=\\pm) `r sum_weight$coefficients[1, 2]` and  `r round(sum_weight$coefficients[2, 1], 0)` ![alt text](http://chart.apis.google.com/chart?cht=tx&chl=\\pm) `r round(sum_weight$coefficients[2, 2], 0)` are quite similar to the non weighted regression.
 
 We could plot the two models and the data:
 
@@ -129,7 +127,7 @@ sum_lm
 ```
 
 which is fitting the model
-$$ln(Zn) = a * day + intercept$$ with a = `r round(sum_lm$coefficients[2, 1], 4)` and intercept = `r round(sum_lm$coefficients[1, 1], 2)`
+![alt text](http://chart.apis.google.com/chart?cht=tx&chl=ln%28Zn%29%20=%20a%20*%20day%2Bintercept) with a = `r round(sum_lm$coefficients[2, 1], 4)` and intercept = `r round(sum_lm$coefficients[1, 1], 2)`
 
 Now plot data and model, as well as the residuals:
 ```{r p85_lm_fitted}
@@ -160,7 +158,9 @@ sum_lm$coefficients[1, 1]
 ```
 extracts the intercept from the summary.
 
-Which is between the weighted and non weighted nonlinear regression.
+The estimated k in the summary output is `r sum_lm$coefficients[2, 1]` ![alt text](http://chart.apis.google.com/chart?cht=tx&chl=\\pm) `r sum_lm$coefficients[2, 2]`, and ![alt text](http://chart.apis.google.com/chart?cht=tx&chl=k_e%20=%20k%20-%20decayrate%20=%200.00531%20-%200.00283%20=%200.00248).
+
+This result is similar to the weighted and non weighted nonlinear regression.
 Again we have the same results as with SAS :) [Small deviations may be due to rounding error]
 
 
