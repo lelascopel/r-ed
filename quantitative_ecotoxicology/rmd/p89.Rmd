@@ -1,13 +1,36 @@
+
+```{r setup, echo=FALSE, cache=FALSE}
+options(scipen = 1, digits = 5)
+```
+
+
+
+### Quantitative Ecotoxicology, page 85, example 3.3, Backstripping
+
+Get the data from github ([FAST](https://raw.github.com/EDiLD/r-ed/master/quantitative_ecotoxicology/data/p89_FAST.csv) and [MERCURY](https://raw.github.com/EDiLD/r-ed/master/quantitative_ecotoxicology/data/p89_MERCURY.csv)) and read it into R:
+
+```{r eval=FALSE}
+MERCURY <- read.table('p89_MERCURY.csv', 
+                      header = TRUE, 
+                      sep = ";")
+```
+```{r include=FALSE}
 MERCURY <- read.table('/home/edisz/Documents/Uni/Projects/blog/quantitative_ecotoxicology/data/p89_MERCURY.csv', 
                       header = TRUE, 
                       sep = ";")
-
+```
+```{r}
 MERCURY$LPCI <- log(MERCURY$PCI)
 head(MERCURY)
-
+```
+```{r p89_raw}
 plot(LPCI ~ DAY, data = MERCURY)
 abline(v = 22)
+```
 
+We can identify two compartments on this plot: A slow one after day 22 and a fast one before day 22.
+
+```{r}
 mod_slow <- lm(LPCI ~ DAY, data = MERCURY[MERCURY$DAY > 22, ])
 sum_mod_slow <- summary(mod_slow)
 # correction
@@ -15,24 +38,30 @@ corr_mod_slow <- exp(sum_mod_slow$sigma^2 / 2)
 MERCURY$PRED <- exp(predict(mod_slow, newdata = MERCURY)) * corr_mod_slow
 CB <- exp(coef(mod_slow)[1]) * corr_mod_slow
 KCB <- abs(coef(mod_slow)[2])
-
-
-
+```
+ 
+```{r}
 MERCURY$ERROR  <- MERCURY$PCI - MERCURY$PRED
+```
+
+```{r}
 mod_fast <- lm(log(ERROR) ~ DAY, data = MERCURY[MERCURY$DAY <= 22, ])
 # na.omit for negative value
 sum_mod_fast <- summary(mod_fast)
 corr_mod_fast <- exp(sum_mod_fast$sigma^2 / 2) 
 CA <- exp(coef(mod_fast)[1]) * corr_mod_fast
 KCA <- abs(coef(mod_fast)[2])
+```
 
+```{r p89_backstripped}
 plot(LPCI ~ DAY, data = MERCURY)
 abline(mod_slow)
 abline(mod_fast, lty = "dotted")
 legend("topright", c("slow", "backstripped-fast"), lty=c("solid", "dashed"), cex = 0.8)
+```
 
 
-
+```{r p89_nls}
 nls_mod1 <- nls(PCI ~ CA * exp(-KCA * DAY) + CB * exp(-KCB * DAY), 
                 data = MERCURY, 
                 algorithm = "port",    # to use the bonds
@@ -46,3 +75,10 @@ pred_nls_mod1 <- predict(nls_mod1, newdata = data.frame(DAY = seq(0,100, 1)))
 lines(seq(0,100, 1), pred_nls_mod1)
 
 summary(nls_mod1)
+```
+
+
+
+
+
+Code and data are available at my [github-repo](https://github.com/EDiLD/r-ed/tree/master/quantitative_ecotoxicology) under file name 'p89'.
