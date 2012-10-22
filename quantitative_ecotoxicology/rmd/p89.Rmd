@@ -7,15 +7,15 @@ options(scipen = 1, digits = 5)
 
 ### Quantitative Ecotoxicology, page 85, example 3.3, Backstripping
 
-Get the data from github ([FAST](https://raw.github.com/EDiLD/r-ed/master/quantitative_ecotoxicology/data/p89_FAST.csv) and [MERCURY](https://raw.github.com/EDiLD/r-ed/master/quantitative_ecotoxicology/data/p89_MERCURY.csv)) and read it into R:
+Get the data from [here](https://raw.github.com/EDiLD/r-ed/master/quantitative_ecotoxicology/data/p89.csv) and read it into R:
 
 ```{r eval=FALSE}
-MERCURY <- read.table('p89_MERCURY.csv', 
+MERCURY <- read.table('p89.csv', 
                       header = TRUE, 
                       sep = ";")
 ```
 ```{r include=FALSE}
-MERCURY <- read.table('/home/edisz/Documents/Uni/Projects/blog/quantitative_ecotoxicology/data/p89_MERCURY.csv', 
+MERCURY <- read.table('/home/edisz/Documents/Uni/Projects/blog/quantitative_ecotoxicology/data/p89.csv', 
                       header = TRUE, 
                       sep = ";")
 ```
