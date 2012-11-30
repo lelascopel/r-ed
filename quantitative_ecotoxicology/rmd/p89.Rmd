@@ -38,6 +38,7 @@ MERCURY$LPCI <- log(MERCURY$PCI)
 mod_slow <- lm(LPCI ~ DAY, data = MERCURY[MERCURY$DAY > 22, ])
 sum_mod_slow <- summary(mod_slow)
 sum_mod_slow
+exp(coef(mod_slow)[1])
 ```
 So this gives us the model ![alt text](http://chart.apis.google.com/chart?cht=tx&chl=C = 12468 e^{-0.0124 * Day}) for the slow component.
 
@@ -53,21 +54,27 @@ CB <- exp(coef(mod_slow)[1]) * corr_mod_slow
 KCB <- abs(coef(mod_slow)[2])
 ```
 
- The residuals from these predictions for day 3 to 22 are associated with the fast compartment.
-And we fit a linear regression to the ln-transformed residuals for the fast compartment:
+The residuals from these predictions for day 3 to 22 are associated with the fast compartment.
+And we fit a linear regression to the ln-transformed residuals for the fast compartment.
+
+```{r p89_residuals}
+plot(LPCI ~ DAY, data = MERCURY)
+points(MERCURY$DAY[1:4], MERCURY$LPCI[1:4], pch = 16)
+abline(a = log(CB), b = -KCB)
+for(i in 1:4) {
+  lines(c(MERCURY$DAY[i], MERCURY$DAY[i]), c(log(MERCURY$PRED[i]), MERCURY$LPCI[i]), lwd = 2)
+}
+```
+
 ```{r}
 # extract residuals
 MERCURY$ERROR  <- MERCURY$PCI - MERCURY$PRED
+MERCURY$ERROR[1:4]
 # fit linear model to ln(residuals) for Day 3 to 22
-mod_fast <- lm(log(ERROR) ~ DAY, data = MERCURY[MERCURY$DAY <= 22, ])
-```
-Don't worry about the warning, it's because of a negative values in the residuals.
-Since the ln of a negative value is not defined, R gives us NaN ('Not a Number'). 
-By default NA and NaN-values are omitted in the lm-function.
-
-```{r}
+mod_fast <- lm(log(ERROR) ~ DAY, data = MERCURY[MERCURY$DAY < 22, ])
 sum_mod_fast <- summary(mod_fast)
 sum_mod_fast
+exp(coef(mod_fast)[1])
 ```
 
 So the model for the fast component is: ![alt text](http://chart.apis.google.com/chart?cht=tx&chl=C = 36171 e^{-0.297 * Day})
@@ -93,7 +100,7 @@ c(CA, KCA, CB, KCB)
 
 ```
 
-We can use this estimates as start-values nto fit a non-linear Model to the data (there we stored the above into objects).
+We can use this estimates as start-values to fit a non-linear Model to the data (therefore we stored them into objects).
 
 We want to fit the following model:
 ![alt text](http://chart.apis.google.com/chart?cht=tx&chl=C=C_A * e^{-k_A*Day}%2BC_B e^{-k_B*Day})
@@ -125,10 +132,9 @@ legend("topright", c("Fast", "slow"), pch=c(16,17))
 ```
 
 
-Again we get nearly the same results with R, except for the fast-component:
+Again we get nearly the same results with R, except for some differences in the linear models.
 
 This is probably due to the bias-correction in slow-component-model.
-
 We have a MSE of
 ```{r}
 sum_mod_slow$sigma^2
@@ -140,9 +146,15 @@ exp(sum_mod_slow$sigma^2 / 2)
 ```
 which is different to the book (1.002).
 
+
+I have no SAS at hand, so I cannot check this with SAS. However let me know if there is an error
+in my calculations.
+
+
 **Refs**
 
 > Newman, Michael C., and William Henry Clements. Ecotoxicology: A Comprehensive Treatment. Boca Raton: Taylor /& Francis, 2008. 
+
 
 
 Code and data are available at my [github-repo](https://github.com/EDiLD/r-ed/tree/master/quantitative_ecotoxicology) under file name 'p89'.

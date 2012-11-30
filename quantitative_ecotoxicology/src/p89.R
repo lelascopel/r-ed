@@ -40,9 +40,11 @@ nls_mod1 <- nls(PCI ~ CA * exp(-KCA * DAY) + CB * exp(-KCB * DAY),
                 lower = c(0, 0, 5000, 20000), 
                 upper = c(1, 1, 20000, 45000))
 
-plot(PCI ~ DAY, data = MERCURY)
+plot(PCI ~ DAY, data = MERCURY, type = "n")
+points(MERCURY$DAY, MERCURY$PCI, pch = ifelse(MERCURY$DAY <= 22, 16, 17))
 # smooth line
 pred_nls_mod1 <- predict(nls_mod1, newdata = data.frame(DAY = seq(0,100, 1)))
 lines(seq(0,100, 1), pred_nls_mod1)
+legend("topright", c("Fast", "slow"), pch=c(16,17))
 
 summary(nls_mod1)
