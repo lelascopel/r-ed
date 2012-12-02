@@ -2,9 +2,12 @@
 .Rhistory
 .RData
 blog.Rproj
-.gitignore
+*.gitignore
 */cache/*
 *.rds
 *~
 */figure/*
 *.Rproj
+*.html
+README.Rmd
+Quantitative_ecotoxicology_Newman_2012.pdf
