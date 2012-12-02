@@ -1,10 +1,3 @@
-
-```{r setup, echo=FALSE, cache=FALSE}
-options(scipen = 1, digits = 5)
-```
-
-
-
 ### Quantitative Ecotoxicology, page 85, example 3.2, Nonlinear Regression
 
 Get the data from [here](https://raw.github.com/EDiLD/r-ed/master/quantitative_ecotoxicology/data/p85.csv) and read it into R:

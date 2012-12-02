@@ -1,7 +1,6 @@
 
 
 
-
 Recently Liess & Beketov, (2011) proposed a new method to analyze mesocosm data: **SPEARmesocosm**. 
 
 They classified species into 'SPEciesAtRisk' and 'SPEcies not At Risk' based on three biological traits: 
@@ -110,7 +109,7 @@ p <- ggplot(spear, aes(x = Time.Point, y = SPEARpesticides, col = Treatment)) +
 p
 ```
 
-![plot of chunk unnamed-chunk-7](figure/unnamed-chunk-7.png) 
+![plot of chunk spear1_plot1](figure/spear1_plot1.png) 
 
 
 
@@ -126,7 +125,7 @@ p2 <- ggplot(spear_means, aes(x = Time.Point, y = mean_spear, col = Treatment)) 
 p2
 ```
 
-![plot of chunk unnamed-chunk-8](figure/unnamed-chunk-8.png) 
+![plot of chunk spear1_plot2](figure/spear1_plot2.png) 
 
 
 
@@ -144,7 +143,7 @@ p3 <- ggplot(spear_relcont, aes(x = Time.Point, y = mean_spear, col = Treatment)
 p3
 ```
 
-![plot of chunk unnamed-chunk-9](figure/unnamed-chunk-9.png) 
+![plot of chunk spear1_plot3](figure/spear1_plot3.png) 
 
 
 We see, that the graphs from SPEARmesocosm and Principle Response Curves look similar,

@@ -3,7 +3,6 @@ setwd("/home/edisz/Documents/Uni/Projects/blog/post4_prcSPEAR/")
 require(knitcitations)
 ```
 
-
 Recently `r citet("10.1007/s10646-011-0689-y")` proposed a new method to analyze mesocosm data: **SPEARmesocosm**. 
 
 They classified species into 'SPEciesAtRisk' and 'SPEcies not At Risk' based on three biological traits: 
@@ -97,7 +96,7 @@ Having the data in R we can make some plots with ggplot2:
 
 * SPEAR against time for all replicates:
 
-```{r cache=TRUE}
+```{r spear1_plot1}
 # plot raw
 p <- ggplot(spear, aes(x = Time.Point, y = SPEARpesticides, col = Treatment)) +
   geom_point() +
@@ -109,7 +108,7 @@ p
 
 * Hmm, so many lines... We can plot also only the mean Spear values per treatment and time
 
-```{r}
+```{r spear1_plot2}
 # plot means
 spear_means <- ddply(spear, .(Treatment, Time.Point), summarise, 
                      mean_spear = mean(SPEARpesticides))
@@ -125,7 +124,7 @@ p2
 
 * Or, to get a plot similar to the Principle Response Curves: Plot the difference of treatments to the control
 
-```{r}
+```{r spear1_plot3}
 # plot difference to control
 spear_relcont <- ddply(spear_means, .(Time.Point), transform, 
       mean_spear = mean_spear - mean_spear[Treatment == 0])

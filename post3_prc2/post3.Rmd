@@ -10,7 +10,7 @@ time <- gl(11, 12, labels=c(-4, -1, 0.1, 1, 2, 4, 8, 12, 15, 19, 24))   # time v
 treatment <- factor(rep(c(0.1, 0, 0, 0.9, 0, 44, 6, 0.1, 44, 0.9, 0, 6), 11))  # treatment variable
 pyr_prc <- prc(response = pyrifos, treatment = treatment, time = time)
 ```
-```{r echo=FALSE}
+```{r prc2_plot1, echo=FALSE}
 plot(pyr_prc, select = abs(summary(pyr_prc)$sp) > 0.5)
 ```
 
@@ -63,7 +63,7 @@ would return the explained variances by treatment and treatment from above.
 
 The first (displayed) axis can also be tested for 'significance' using a permutation test:
 
-```{r cache=TRUE}
+```{r}
 anova(pyr_prc, strata = time, first=TRUE, perm.max = 1000)
 ```
 which gives the significance of the first PRC-axis (cf. Table 2).
@@ -80,7 +80,7 @@ ln_treatment <- log(20 * as.numeric(as.character(treatment)) + 1)
 ```
 
 And then we run a permutation test (via anova.cca) per sampling date:
-```{r cache=TRUE}
+```{r}
 out <- NULL
 for(i in levels(time)) {
   take_spec <- pyrifos[time == i, ] 
@@ -102,7 +102,7 @@ Instead of using a trend-test we could use Dunnett-Contrasts - Comparing every t
 
 I R we could do something like this:
 
-```{r cache=TRUE}
+```{r}
 df <- data.frame(treatment = treatment,
                  time = time)
 # package for multiple comparisons

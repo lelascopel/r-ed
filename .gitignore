@@ -3,11 +3,6 @@
 .RData
 blog.Rproj
 *.gitignore
-*/cache/*
-*.rds
 *~
-*/figure/*
-*.Rproj
-*.html
-README.Rmd
 Quantitative_ecotoxicology_Newman_2012.pdf
+quantitative_ecotoxicology/rmd/*.html

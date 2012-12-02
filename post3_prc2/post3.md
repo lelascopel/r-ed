@@ -4,7 +4,7 @@ How are these interpreted?
 
 
 
-![plot of chunk unnamed-chunk-2](figure/unnamed-chunk-2.png) 
+![plot of chunk prc2_plot1](figure/prc2_plot1.png) 
 
 
 These plot shows on the x-Axis the time and on the y-Axis the difference from the control treatments.
@@ -20,7 +20,6 @@ For example ceanhora (=*Caenis horaria*) has the lowest weight (~-3), so this sp
 Let´s move back to the paper and the tables therein:
 Table 1 contains the proportions of variance that can be attributed to Time and Treatment.
 We can extract this information if we just print the prc-object:
-
 
 
 ```r
@@ -53,20 +52,14 @@ pyr_prc
 ##   PC1   PC2   PC3   PC4   PC5   PC6   PC7   PC8 
 ## 17.16  9.19  7.58  6.06  5.73  4.84  4.52  4.10 
 ## (Showed only 8 of all 77 unconstrained eigenvalues)
-## 
 ```
-
-
 
 
 Since a prc is a special case of a rda model
 
-
 ```r
 rda(response ~ treatment * time + Condition(time))
 ```
-
-
 
 so *Conditional* refers in this output to time and *Constrained* to treatment and its interaction with time.
 
@@ -78,7 +71,6 @@ Either we refit the model with rda() as above and look at the summary where this
 
 This object is quite big with a lot of information in it, for more information see ?cca.object.
 The eigenvalues are stored in pyr_prc$CCA$eig and to get the explained variance per axis we need to divide these eigenvalues by their sum:
-
 
 
 ```r
@@ -97,29 +89,23 @@ pyr_prc$CCA$eig/sum(pyr_prc$CCA$eig)
 ##    RDA33    RDA34    RDA35    RDA36    RDA37    RDA38    RDA39    RDA40 
 ## 0.005336 0.004568 0.004317 0.004174 0.003804 0.003514 0.003508 0.003160 
 ##    RDA41    RDA42    RDA43    RDA44 
-## 0.002884 0.002807 0.002116 0.001852 
+## 0.002884 0.002807 0.002116 0.001852
 ```
-
-
 
 
 So the first axis explains 26% and the second 8.6% of variance.
 
 As a side note:
 
-
 ```r
 pyr_prc$CCA$tot.chi/pyr_prc$tot.chi
 pyr_prc$pCCA$tot.chi/pyr_prc$tot.chi
 ```
 
-
-
 would return the explained variances by treatment and treatment from above.
 
 
 The first (displayed) axis can also be tested for 'significance' using a permutation test:
-
 
 
 ```r
@@ -135,10 +121,8 @@ anova(pyr_prc, strata = time, first = TRUE, perm.max = 1000)
 ## RDA1      1  25.3 15.1    199  0.005 **
 ## Residual 77 129.0                      
 ## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ```
-
-
 
 which gives the significance of the first PRC-axis (cf. Table 2).
 
@@ -150,16 +134,12 @@ Of course this can also be done in R ;)
 
 First we need to transform the treatment dose:
 
-
 ```r
 ln_treatment <- log(20 * as.numeric(as.character(treatment)) + 1)
 ```
 
 
-
-
 And then we run a permutation test (via anova.cca) per sampling date:
-
 
 ```r
 out <- NULL
@@ -173,10 +153,8 @@ sapply(out, function(x) x[1, 5])  # grabs the p-values per date
 
 ```
 ##    -4    -1   0.1     1     2     4     8    12    15    19    24 
-## 0.394 0.898 0.006 0.001 0.001 0.001 0.003 0.002 0.038 0.029 0.172 
+## 0.426 0.894 0.010 0.001 0.001 0.001 0.005 0.002 0.036 0.023 0.171
 ```
-
-
 
 I am looping through time and for every sampling week I run a permutation test on a RDA. The results are in accordance with Table 2: there is a statistically significant effect of treatment from week 0.1 till week 19.
 
@@ -192,11 +170,29 @@ Instead of using a trend-test we could use Dunnett-Contrasts - Comparing every t
 I R we could do something like this:
 
 
-
 ```r
 df <- data.frame(treatment = treatment, time = time)
 # package for multiple comparisons
 require(multcomp)
+```
+
+```
+## Loading required package: multcomp
+```
+
+```
+## Loading required package: mvtnorm
+```
+
+```
+## Loading required package: survival
+```
+
+```
+## Loading required package: splines
+```
+
+```r
 # create empty object
 out_willi <- NULL
 # loop through time, compute PCA, extract scores and do Williams-Test
@@ -217,12 +213,10 @@ result[["1"]]
 ```
 ##   comp     pval   sig
 ## 1  0.1 0.999857 FALSE
-## 2  0.9 0.060827 FALSE
-## 3    6 0.002045  TRUE
-## 4   44 0.001063  TRUE
+## 2  0.9 0.060847 FALSE
+## 3    6 0.001974  TRUE
+## 4   44 0.001182  TRUE
 ```
-
-
 
 
 

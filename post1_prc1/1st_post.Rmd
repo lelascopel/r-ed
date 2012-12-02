@@ -28,7 +28,7 @@ dose <- factor(rep(c(0.1, 0, 0, 0.9, 0, 44, 6, 0.1, 44, 0.9, 0, 6), 11))
 
 
 With this at hand we can calculate and plot the PRC using the prc function:
-```{r}
+```{r prc1_plot1}
 pyr_prc <- prc(response = pyrifos, treatment = dose, time = week)
 plot(pyr_prc)
 ```
@@ -50,7 +50,7 @@ head(sum_prc$sp)
 
 And then select only those species with greater or less scores:
 
-```{r}
+```{r prc1_plot2}
 plot(pyr_prc, select = abs(sum_prc$sp) > 0.5)
 ```
 

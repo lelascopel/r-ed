@@ -4,7 +4,6 @@ options(scipen = 1, digits = 5)
 ```
 
 
-
 ### Quantitative Ecotoxicology, page 85, example 3.3, Backstripping
 
 Get the data from [here](https://raw.github.com/EDiLD/r-ed/master/quantitative_ecotoxicology/data/p89.csv) and read it into R:
