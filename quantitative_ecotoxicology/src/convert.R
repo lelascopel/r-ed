@@ -1,3 +1,6 @@
+## function to read data from SAS/pdf
+## start copying from DATALINES till ';'
+
 read_new <- function(x){
   con <- file(x)
   tmp <- readLines(con) # Read one line 
@@ -24,8 +27,8 @@ read_new <- function(x){
   out
 }
 
-setwd(file.path(getwd(), "quantitative_ecotoxicology/data/"))
-files <- list.files(file.path(getwd(), "data"), full.names=TRUE, pattern="*.txt")
+
+files <- list.files('/home/edisz/Documents/Uni/Projects/blog/quantitative_ecotoxicology/data/', full.names=TRUE, pattern="*.txt")
 for(i in seq_along(files)){
   print(files[i])
   df <- read_new(files[i])
