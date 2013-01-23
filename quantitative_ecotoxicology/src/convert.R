@@ -1,11 +1,12 @@
 ## function to read data from SAS/pdf
-## start copying from DATALINES till ';'
+## start copying from INPUT till ';'
 
 read_new <- function(x){
   con <- file(x)
   tmp <- readLines(con) # Read one line 
   close(con)
   
+  tmp <- gsub("\\$ ", "", tmp)
   require(stringr)
   var <- strsplit(tmp[1], split = " ")
   var_a <- which(var[[1]] == "@@;")
@@ -28,7 +29,7 @@ read_new <- function(x){
 }
 
 
-files <- list.files('/home/edisz/Documents/Uni/Projects/blog/quantitative_ecotoxicology/data/', full.names=TRUE, pattern="*.txt")
+files <- list.files('/home/edisz/Documents/Uni/Projects/blog/quantitative_ecotoxicology/data', full.names=TRUE, pattern="*.txt")
 for(i in seq_along(files)){
   print(files[i])
   df <- read_new(files[i])
