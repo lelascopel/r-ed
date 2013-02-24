@@ -1,3 +1,12 @@
+---
+layout: post
+title: "Quantitative Ecotoxicology, Page 101, Example 3.6, Langmuir"
+date: 2013-02-24 00:25
+comments: true
+categories: [Quantitative Ecotoxicology with R, R]
+published: true
+---
+
 ```{r setup, echo=FALSE, cache=FALSE}
 options(scipen = 1, digits = 5)
 ```
@@ -51,14 +60,14 @@ This gives us the estimates for K and M as:
 ```{r}
 summary(mod_nls)
 ```
-$$K = 2.097 \pm 0.188$$ 
 
-$$M = 9.899 \pm 0.521$$
+* $K = 2.097 \pm 0.188$
+* $M = 9.899 \pm 0.521$
 
 The t and p-values of this output are not of interest for us (tests if the parameters deviate from 0).
 
 We can plot the raw data and the model easily using the predict-function:
-```{r p101_plot-nls}
+```{r plot-nls}
 plot(ZINC$C, ZINC$N, xlab = 'C', ylab = 'N')
 # generate C-values to predict
 x_n <- seq(min(ZINC$C), max(ZINC$C), length.out=200)
@@ -76,7 +85,7 @@ ZINC$Y <- ZINC$C / ZINC$N
 ```
 
 Fitting a linear model to this data is done with lm():
-```{r p101_plot-lm}
+```{r plot-lm}
 mod_lm <- lm(Y ~ C, data = ZINC)
 plot(ZINC$C, ZINC$Y, ylab = 'C/N', xlab = 'C')
 abline(mod_lm)
@@ -84,10 +93,9 @@ summary(mod_lm)
 ```
 We get from this K and M as:
 
-$$ K = \frac{slope}{intercept} = \frac{0.114}{0.043} = 2.62 $$
+* $K = \frac{slope}{intercept} = \frac{0.114}{0.043} = 2.62$
+* $M = \frac{1}{slope} = \frac{1}{0.114} = 8.77$
 
-$$ M = \frac{1}{slope} = \frac{1}{0.114} = 8.77 $$
-make
 The R^2 is 0.966.
 
 
@@ -119,7 +127,7 @@ and for M:
 We can inspect the residuals of both models:
 
 
-```{r p101_plot-resid, out.width="500px", fig.height=5, fig.width=9}
+```{r plot-resid, out.width="500px", fig.height=5, fig.width=9}
 par(mfrow = c(1,2))
 # lm
 plot(mod_lm, which = 1, main='linear model without weights')
