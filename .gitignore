@@ -6,3 +6,5 @@ blog.Rproj
 *~
 Quantitative_ecotoxicology_Newman_2012.pdf
 quantitative_ecotoxicology/rmd/*.html
+cache/
+*.txt
