@@ -1,11 +1,3 @@
----
-layout: post
-title: "Quantitative Ecotoxicology, Page 108, Example 3.7, Accumulation"
-date: 2013-02-24 21:22
-comments: true
-categories: [Quantitative Ecotoxicology with R, R]
-published: false
----
 ```{r setup, echo=FALSE, cache=FALSE}
 options(scipen = 1, digits = 5)
 ```
