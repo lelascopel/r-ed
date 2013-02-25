@@ -8,6 +8,7 @@ reproduced with **R**.
 
 **Data** files are in ~/data,
 **R-Code** in ~/src 
-and **Code + Text** in ~/rmd.
+**Code + Text** in ~/rmd
+and **markdown-files** in ~/md.
 
 Posts are tagged with 'Quantitative Ecotoxicology with R' in my [blog](http://edild.tumblr.com/).
