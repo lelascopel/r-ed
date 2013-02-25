@@ -1,0 +1,143 @@
+---
+layout: post
+title: "Quantitative Ecotoxicology, Page 147, Example 4.3, LC50"
+date: 2013-02-25 18:22
+comments: true
+categories: [Quantitative Ecotoxicology with R, R]
+published: true
+---
+
+
+
+
+
+This is about example 4.3 on page 147 of [Quantitative Ecotoxicology](http://www.crcpress.com/product/isbn/9781439835647). This example is about Calculations of $LC_{50}$ values.
+In this post I won't reproduce the SAS-Code since I do not have any experience with SAS PROC PROBIT and I do not fully understand whats happening there.
+
+Instead I will fit Dose-Response-Models using the `drc`-package to this data.
+
+
+Get the data from [here](https://raw.github.com/EDiLD/r-ed/master/quantitative_ecotoxicology/data/p147.csv) and read it into R:
+
+
+```r
+require(RCurl)
+url <- getURL("https://raw.github.com/EDiLD/r-ed/master/quantitative_ecotoxicology/data/p147.csv")
+salt <- read.table(text = url, header = TRUE, sep = ";")
+```
+
+
+```r
+head(salt)
+```
+
+```
+##   DEAD TOTAL CONC
+## 1   16    76 10.3
+## 2   22    79 10.8
+## 3   40    77 11.6
+## 4   69    76 13.2
+## 5   78    78 15.8
+## 6   77    77 20.1
+```
+
+
+So the data consists of number of dead animals (DEAD) from all animals (TOTAL) exposed to a concentration (CONC).
+First we create a new column with the proportion of dead animals:
+
+
+```r
+salt$prop <- salt$DEAD/salt$TOTAL
+```
+
+
+Lets have a look at the raw data (note that I use a logarithmic scale for the x-axis):
+
+```r
+plot(salt$CONC, salt$prop, xlab = "Concentration", ylab = "Proportion dead", 
+    log = "x")
+```
+
+<img src="figure/p147_plot_raw.png" title="plot of chunk p147_plot_raw" alt="plot of chunk p147_plot_raw" width="400px" />
+
+
+
+I will use the drc-package of Christian Ritz and Jens Strebig to fit dose-response-curves to this data. The main function of this package is `drm`:
+
+
+Here I fit a two-parameter log-logistic model to the data (see <a href="http://dx.doi.org/10.1002/etc.7">Ritz (2010)</a> for a review of dose-response-models used in ecotoxicology):
+
+```r
+require(drc)
+mod <- drm(prop ~ CONC, data = salt, fct = LL.2())
+```
+
+
+So the usage is similar to `lm()` or `nls()`, except the `fct` argument. This argument defines the model that is fitted to the data.
+
+We can compare this model with other models using the AIC (the smaller the better). 
+
+Here I compare the 2-parameter log-logistic model with a two-parameter Weibull and a 2-parameter Gompertz model. 
+
+`drc` has for this purpose the `mselect()` function that shows some diagnostics for every model:
+
+* likelihood (the higher the better; however use this only when your models are nested)
+* AIC (the lower the better)
+* residual variance (the lower the better)
+
+
+```r
+mselect(mod, fctList = list(W1.2(), G.2()))
+```
+
+```
+##      logLik      IC Lack of fit    Res var
+## LL.2 14.613 -23.226          NA 0.00067322
+## G.2  11.903 -17.806          NA 0.00166155
+## W1.2 10.718 -15.437          NA 0.00246584
+```
+
+
+The LL.2-model has the lowest AIC so I will keep this. 
+Lets see how the model looks like:
+
+```r
+# raw data
+plot(prop ~ CONC, data = salt, xlim = c(9, 21), ylim = c(0, 1), ylab = "Proportion dead", 
+    xlab = "Concentration")
+
+conc_pred <- seq(9, 21, 0.1)
+lines(conc_pred, predict(mod, newdata = data.frame(CONC = conc_pred)))
+```
+
+<img src="figure/p147_plot_mod.png" title="plot of chunk p147_plot_mod" alt="plot of chunk p147_plot_mod" width="400px" />
+
+
+We can get the $LC_{50}$ with confidence interval from the model using the `ED()` function:
+
+```r
+ED(mod, 50, interval = "delta")
+```
+
+```
+## 
+## Estimated effective doses
+## (Delta method-based confidence interval(s))
+## 
+##      Estimate Std. Error   Lower Upper
+## 1:50  11.4768     0.0575 11.3171  11.6
+```
+
+
+
+#### References
+
+<p>Ritz C (2010).
+&ldquo;Toward A Unified Approach to Dose-Response Modeling in Ecotoxicology.&rdquo;
+<EM>Environmental Toxicology And Chemistry</EM>, <B>29</B>.
+ISSN 07307268, <a href="http://dx.doi.org/10.1002/etc.7">http://dx.doi.org/10.1002/etc.7</a>.
+
+
+-----------------------------------
+
+Code and data is available on my [github-repo](https://github.com/EDiLD/r-ed/tree/master/quantitative_ecotoxicology) under file name 'p147'.
