@@ -16,7 +16,7 @@ First we will look at the accumulation phase:
 ```{r message=FALSE}
 require(RCurl)
 # Accumulation
-url_accum <- getURL("https://raw.github.com/EDiLD/r-ed/master/quantitative_ecotoxicology/data/109_accum.csv")
+url_accum <- getURL("https://raw.github.com/EDiLD/r-ed/master/quantitative_ecotoxicology/data/p109_accum.csv")
 ACCUM <- read.table(text = url_accum, header = TRUE, sep = ";")
 
 ```
@@ -65,7 +65,7 @@ However we could also estimate the elimination constant $(k_e)$ from the elimina
 
 ```{r}
 # Elimination data
-url_elimin <- getURL("https://raw.github.com/EDiLD/r-ed/master/quantitative_ecotoxicology/data/109_elimin.csv")
+url_elimin <- getURL("https://raw.github.com/EDiLD/r-ed/master/quantitative_ecotoxicology/data/p109_elimin.csv")
 ELIMIN <- read.table(text = url_elimin, header = TRUE, sep = ";")
 ```
 ```{r plot_elimin_raw}
