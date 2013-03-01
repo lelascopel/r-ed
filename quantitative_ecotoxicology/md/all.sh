@@ -1,3 +1,3 @@
 #!/bin/bash 
 
-cat * >> all.md
+cat *.md >> all.md
