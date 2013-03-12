@@ -11,4 +11,4 @@ reproduced with **R**.
 **Code + Text** in ~/rmd
 and **markdown-files** in ~/md.
 
-Posts are tagged with 'Quantitative Ecotoxicology with R' in my [blog](http://edild.tumblr.com/).
+Posts are tagged on my [blog](http://edild.github.com/) with 'Quantitative Ecotoxicology with R'.
