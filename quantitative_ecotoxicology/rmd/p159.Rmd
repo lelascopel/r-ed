@@ -90,10 +90,9 @@ require(drc)
 mod1 <- drm(PROP ~ CONC, data = NAP, fct = LL.2())
 ```
 
-Comparing with other model this models performs quite good. Also the lack-of-fit test indicates a reasonable model:
+Comparing with other model this models performs quite good. 
 ```{r warning=FALSE}
 mselect(mod1, fctList= list(LL.3(), LL.4(), LL.5(), W1.2(), W1.3(), W1.4()))
-modelFit(mod1)
 ```
 
 ```{r plot_mod1}
@@ -122,7 +121,6 @@ However a Weibull model fits slightly better the data, so I change to a two-para
 ```{r warning=FALSE}
 mselect(mod2, fctList= list(LL.3(), LL.4(), LL.5(), W1.2(), W1.3(), W1.4()))
 mod2 <- update(mod2, fct = W1.2())
-modelFit(mod2)
 ```
 
 ```{r plot_mod2}
