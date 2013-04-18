@@ -1,6 +1,7 @@
 ## function to read data from SAS/pdf
 ## start copying from INPUT till ';'
 
+
 read_new <- function(x){
   con <- file(x)
   tmp <- readLines(con) # Read one line 
