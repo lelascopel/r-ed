@@ -6,9 +6,9 @@ Examples from
 
 reproduced with **R**.
 
-**Data** files are in ~/data,
-**R-Code** in ~/src 
-**Code + Text** in ~/rmd
-and **markdown-files** in ~/md.
+* **Data** files are in ~/data
+* **R-Code** in ~/src 
+* **Code + Text** in ~/rmd
+* **markdown-files** in ~/md.
 
 Posts are tagged on my [blog](http://edild.github.com/) with 'Quantitative Ecotoxicology with R'.
