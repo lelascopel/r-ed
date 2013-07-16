@@ -6,9 +6,9 @@ How are these interpreted?
 # data
 require(vegan)
 data(pyrifos)  # abundance data
-time <- gl(11, 12, labels=c(-4, -1, 0.1, 1, 2, 4, 8, 12, 15, 19, 24))   # time variable
-treatment <- factor(rep(c(0.1, 0, 0, 0.9, 0, 44, 6, 0.1, 44, 0.9, 0, 6), 11))  # treatment variable
-pyr_prc <- prc(response = pyrifos, treatment = treatment, time = time)
+week <- gl(11, 12, labels=c(-4, -1, 0.1, 1, 2, 4, 8, 12, 15, 19, 24))   # time variable
+dose <- factor(rep(c(0.1, 0, 0, 0.9, 0, 44, 6, 0.1, 44, 0.9, 0, 6), 11))  # treatment variable
+pyr_prc <- prc(response = pyrifos, treatment = dose, time = week)
 ```
 ```{r prc2_plot1, echo=FALSE}
 plot(pyr_prc, select = abs(summary(pyr_prc)$sp) > 0.5)
@@ -64,7 +64,7 @@ would return the explained variances by treatment and treatment from above.
 The first (displayed) axis can also be tested for 'significance' using a permutation test:
 
 ```{r}
-anova(pyr_prc, strata = time, first=TRUE, perm.max = 1000)
+anova(pyr_prc, strata = week, first=TRUE, perm.max = 1000)
 ```
 which gives the significance of the first PRC-axis (cf. Table 2).
 
@@ -76,16 +76,16 @@ Of course this can also be done in R ;)
 
 First we need to transform the treatment dose:
 ```{r}
-ln_treatment <- log(20 * as.numeric(as.character(treatment)) + 1)
+ln_dose <- log(20 * as.numeric(as.character(dose)) + 1)
 ```
 
 And then we run a permutation test (via anova.cca) per sampling date:
 ```{r}
 out <- NULL
-for(i in levels(time)) {
-  take_spec <- pyrifos[time == i, ] 
-  take_treatment <- ln_treatment[time == i]
-  out[[i]] <- anova(rda(take_spec ~ take_treatment), by = "terms", step = 1000)
+for(i in levels(week)) {
+  take_spec <- pyrifos[week == i, ] 
+  take_dose <- ln_dose[week == i]
+  out[[i]] <- anova(rda(take_spec ~ take_dose), by = "terms", step = 1000)
 }
 sapply(out, function(x) x[1, 5])   # grabs the p-values per date
 ```
@@ -103,23 +103,23 @@ Instead of using a trend-test we could use Dunnett-Contrasts - Comparing every t
 I R we could do something like this:
 
 ```{r}
-df <- data.frame(treatment = treatment,
-                 time = time)
+df <- data.frame(dose = dose,
+                 week = week)
 # package for multiple comparisons
 require(multcomp)
 # create empty object
 out_willi <- NULL
 # loop through time, compute PCA, extract scores and do Williams-Test
-for(i in levels(time)) {
-    pca <- rda(pyrifos[time == i, ])                          # Compute PCA
+for(i in levels(week)) {
+    pca <- rda(pyrifos[week == i, ])                          # Compute PCA
     pca_scores <- scores(pca, display="sites", choices = 1)  # scores of first principle component
     
-    out_willi[[i]] <- summary(glht(aov(pca_scores ~ treatment, data = df[time == i, ]), 
+    out_willi[[i]] <- summary(glht(aov(pca_scores ~ dose, data = df[week == i, ]), 
                                    alternative = "t", 
-                                   linfct = mcp(treatment = "Dunnett")))
+                                   linfct = mcp(dose = "Dunnett")))
     }
 # extract p-values
-result <- lapply(out_willi, function(x) data.frame(comp = levels(df$treatment)[-1], 
+result <- lapply(out_willi, function(x) data.frame(comp = levels(df$dose)[-1], 
                                          pval = x$test$pvalues, 
                                          sig = x$test$pvalues < 0.05))
 # shows the results of Williams-Test on PCA-scores for week 1:
