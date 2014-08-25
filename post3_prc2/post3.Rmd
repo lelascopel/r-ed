@@ -8,10 +8,11 @@ require(vegan)
 data(pyrifos)  # abundance data
 week <- gl(11, 12, labels=c(-4, -1, 0.1, 1, 2, 4, 8, 12, 15, 19, 24))   # time variable
 dose <- factor(rep(c(0.1, 0, 0, 0.9, 0, 44, 6, 0.1, 44, 0.9, 0, 6), 11))  # treatment variable
+ditch <- gl(12, 1, length=132)
 pyr_prc <- prc(response = pyrifos, treatment = dose, time = week)
 ```
 ```{r prc2_plot1, echo=FALSE}
-plot(pyr_prc, select = abs(summary(pyr_prc)$sp) > 0.5)
+plot(pyr_prc, select = abs(summary(pyr_prc)$sp) > 0.5, scaling = 1)
 ```
 
 These plot shows on the x-Axis the time and on the y-Axis the difference from the control treatments.
@@ -61,11 +62,35 @@ pyr_prc$pCCA$tot.chi/pyr_prc$tot.chi
 would return the explained variances by treatment and treatment from above.
 
 
-The first (displayed) axis can also be tested for 'significance' using a permutation test:
+The first (displayed) axis can also be tested for 'significance' using a permutation test.
+However observations from a experimental ditch are not independent, since the same ditch was measured repeatedly during the experiment. 
+We have to take this into account: each ditch represents a time-series.
+We will permute the whole series of one ditch, keeping the temporal order.
+
+To setup such a permutation scheme we use the permute package, which is automatically loaded with vegan:
 
 ```{r}
-anova(pyr_prc, strata = week, first=TRUE, perm.max = 1000)
+control = how(plots = Plots(strata = ditch, type = "free"),
+              within = Within(type = "none"),
+              nperm = 199)
 ```
+
+With this setup we can create a permutation matrix. 
+Each row therein is one permuation, the values are the rownumbers of the original data set.
+```{r}
+set.seed(1234)
+permutations <- shuffleSet(nrow(pyrifos), control = control)
+```
+
+This can be passed to permutest, testing the first eigenvalue of our model.
+
+```{r}
+mod_perm <- permutest(pyr_prc, 
+                      permutations = permutations, 
+                      first = TRUE)
+mod_perm
+```
+
 which gives the significance of the first PRC-axis (cf. Table 2).
 
 

@@ -4,7 +4,7 @@ How are these interpreted?
 
 
 
-![plot of chunk prc2_plot1](figure/prc2_plot11.png) ![plot of chunk prc2_plot1](figure/prc2_plot12.png) 
+![plot of chunk prc2_plot1](figure/prc2_plot1.png) 
 
 
 These plot shows on the x-Axis the time and on the y-Axis the difference from the control treatments.
@@ -103,24 +103,48 @@ pyr_prc$pCCA$tot.chi/pyr_prc$tot.chi
 would return the explained variances by treatment and treatment from above.
 
 
-The first (displayed) axis can also be tested for 'significance' using a permutation test:
+The first (displayed) axis can also be tested for 'significance' using a permutation test.
+However observations from a experimental ditch are not independent, since the same ditch was measured repeatedly during the experiment. 
+We have to take this into account: each ditch represents a time-series.
+We will permute the whole series of one ditch, keeping the temporal order.
+
+To setup such a permutation scheme we use the permute package, which is automatically loaded with vegan:
 
 
 ```r
-anova(pyr_prc, strata = week, first = TRUE, perm.max = 1000)
+control = how(plots = Plots(strata = ditch, type = "free"), within = Within(type = "none"), 
+    nperm = 199)
+```
+
+
+With this setup we can create a permutation matrix. 
+Each row therein is one permuation, the values are the rownumbers of the original data set.
+
+```r
+set.seed(1234)
+permutations <- shuffleSet(nrow(pyrifos), control = control)
+```
+
+
+This can be passed to permutest, testing the first eigenvalue of our model.
+
+
+```r
+mod_perm <- permutest(pyr_prc, permutations = permutations, first = TRUE)
+mod_perm
 ```
 
 ```
-## Permutation test for rda under reduced model
-## Permutations stratified within 'week'
 ## 
-## Model: prc(response = pyrifos, treatment = dose, time = week)
-##          Df   Var    F N.Perm Pr(>F)   
-## RDA1      1  25.3 15.1    199  0.005 **
-## Residual 77 129.0                      
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## Permutation test for rda 
+## 
+## Call: prc(response = pyrifos, treatment = dose, time = week)
+## Permutation test for first constrained eigenvalue
+## Pseudo-F:	 15.1 (with 1, 77 Degrees of Freedom)
+## Significance:	 0.01 
+## Based on 199 permutations under reduced model.
 ```
+
 
 which gives the significance of the first PRC-axis (cf. Table 2).
 
@@ -151,7 +175,7 @@ sapply(out, function(x) x[1, 5])  # grabs the p-values per date
 
 ```
 ##    -4    -1   0.1     1     2     4     8    12    15    19    24 
-## 0.405 0.890 0.003 0.001 0.001 0.001 0.002 0.003 0.028 0.020 0.178
+## 0.410 0.898 0.007 0.001 0.001 0.001 0.004 0.002 0.032 0.016 0.169
 ```
 
 I am looping through time and for every sampling week I run a permutation test on a RDA. The results are in accordance with Table 2: there is a statistically significant effect of treatment from week 0.1 till week 19.
@@ -176,17 +200,8 @@ require(multcomp)
 
 ```
 ## Loading required package: multcomp
-```
-
-```
 ## Loading required package: mvtnorm
-```
-
-```
 ## Loading required package: survival
-```
-
-```
 ## Loading required package: splines
 ```
 
@@ -211,9 +226,9 @@ result[["1"]]
 ```
 ##   comp     pval   sig
 ## 1  0.1 0.999857 FALSE
-## 2  0.9 0.060803 FALSE
-## 3    6 0.002143  TRUE
-## 4   44 0.000952  TRUE
+## 2  0.9 0.060814 FALSE
+## 3    6 0.002077  TRUE
+## 4   44 0.001337  TRUE
 ```
 
 

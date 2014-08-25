@@ -29,7 +29,7 @@ head(pyrifos[, c(1:10)])
 
 
 So rows are samplings and colums are the species (with abbreviated names), a normal species x sites matrix.
-The colnames code treatment and time, but we must create these two factors:
+The colnames code treatment and time, but we must create these two factors as well as a factor coding the ditch:
 
 
 ```r
@@ -37,6 +37,7 @@ The colnames code treatment and time, but we must create these two factors:
 week <- gl(11, 12, labels = c(-4, -1, 0.1, 1, 2, 4, 8, 12, 15, 19, 24))
 # treatment
 dose <- factor(rep(c(0.1, 0, 0, 0.9, 0, 44, 6, 0.1, 44, 0.9, 0, 6), 11))
+ditch <- gl(12, 1, length = 132)
 ```
 
 
@@ -45,7 +46,7 @@ With this at hand we can calculate and plot the PRC using the prc function:
 
 ```r
 pyr_prc <- prc(response = pyrifos, treatment = dose, time = week)
-plot(pyr_prc)
+plot(pyr_prc, scaling = 1)
 ```
 
 ![plot of chunk prc1_plot1](figure/prc1_plot1.png) 
@@ -79,7 +80,7 @@ And then select only those species with greater or less scores:
 
 
 ```r
-plot(pyr_prc, select = abs(sum_prc$sp) > 0.5)
+plot(pyr_prc, select = abs(sum_prc$sp) > 0.5, scaling = 1)
 ```
 
 ![plot of chunk prc1_plot2](figure/prc1_plot2.png) 
