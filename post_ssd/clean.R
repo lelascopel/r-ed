@@ -53,3 +53,5 @@ require(plyr)
 df_agg <- ddply(df, .(species, subphyl), summarise,
       val = exp(mean(log(value))),
       n = length(value))
+
+write.table(df_agg, '/home/edisz/Documents/Uni/Projects/blog/post_ssd/ssd_data.csv', sep = ';', row.names = FALSE)
