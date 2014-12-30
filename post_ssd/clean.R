@@ -22,7 +22,6 @@ SELECT
    ELSE NULL::numeric
  END as value,
  species.latin_name as species,
- species.subphylum_div as subphyl, 
  refs.reference_number as ref
 FROM 
  coredata.tests
@@ -39,6 +38,7 @@ WHERE
  'LC50*', 'LC50*/')
  AND tests.test_cas = 2921882
  AND species.kingdom = 'Animalia'
+ AND species.subphylum_div = 'Hexapoda'
  AND results.effect = 'MOR'
  AND results.obs_duration_mean = '96' 
  AND results.obs_duration_unit = 'h'
@@ -50,8 +50,12 @@ dbUnloadDriver(drv)
 
 # take geometric mean per species
 require(plyr)
-df_agg <- ddply(df, .(species, subphyl), summarise,
+df_agg <- ddply(df, .(species), summarise,
       val = exp(mean(log(value))),
       n = length(value))
 
-write.table(df_agg, '/home/edisz/Documents/Uni/Projects/blog/post_ssd/ssd_data.csv', sep = ';', row.names = FALSE)
+# rm sialis 
+df_agg <- df_agg[!df_agg$species %in% c('Sialis lutaria'), ]
+
+write.table(df_agg, '/home/edisz/Documents/Uni/Projects/blog/post_ssd/ssd_data.csv', sep = ',', row.names = FALSE)
+
