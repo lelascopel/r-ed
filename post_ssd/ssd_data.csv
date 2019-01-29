@@ -1,36 +1,13 @@
-"species","val","n"
-"Aedes taeniorhynchus",0.249198715887542,2
-"Anax imperator",2.24971841590176,6
-"Anisops sardeus",0.9,1
-"Anopheles quadrimaculatus",1,1
-"Atalophlebia australis",0.252654383906255,3
-"Caenis horaria",0.591607978309962,2
-"Chaoborus obscuripes",0.686571984741625,9
-"Chironomus dilutus",0.444773373022343,5
-"Chironomus plumosus",49.6296930653547,15
-"Chironomus riparius",0.174928556845359,2
-"Chironomus tentans",0.388770939339518,14
-"Claassenia sabulosa",1.01291658096805,2
-"Cloeon dipterum",0.432090862593986,11
-"Corixa punctata",2.63339723442087,5
-"Culex pipiens ssp. molestus",0.547722557505166,2
-"Culex quinquefasciatus",0.3,1
-"Deleatidium sp.",0.05,1
-"Ephemerella sp.",0.363318042491699,2
-"Heptageniidae",7,1
-"Leptoceridae",0.818474190185616,2
-"Molanna angustata",7.97571313425953,2
-"Neoplea striola",1.85585827728014,6
-"Notonecta maculata",8.34461850185751,6
-"Parapoynx stratiotata",9.67916606154614,6
-"Peltodytes sp.",0.848528137423857,2
-"Plea minutissima",2.37776804326535,6
-"Plecoptera",10,1
-"Procloeon sp.",0.081,1
-"Pteronarcella badia",0.827042925125413,2
-"Pteronarcys californica",13.4164078649987,2
-"Ranatra linearis",6.01440043247379,6
-"Sialis lutaria",1.16769360825583,3
-"Sigara arguta",2.16,1
-"Simulium vittatum",0.28,1
-"Xanthocnemis zealandica",8.44,1
+"species","val"
+"Dendrobaena veneta",32.67
+"Perionyx excavatus",7.77
+"Eisenia andrei",12.79
+"Enchytraeus crypticus",0.55
+"Enchytraeus bigeminus",39.97
+"Enchytraeus dudichi",21.21
+"Folsomia candida",2.98
+"Folsomia fimetaria",5.04
+"Sinela curviseta",5.59
+"Protaphorura fimata",2.44
+"Proisotoma minuta",7.54
+"Hypoaspis aculeifer",420.00
